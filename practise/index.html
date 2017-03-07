@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Practise</title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<link rel="stylesheet" href="css/bootstrap.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+	</script>
+<script
+  src="https://code.jquery.com/jquery-1.12.4.js"
+  integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU="
+  crossorigin="anonymous"></script>
+
+  <style type="text/css">
+  	pre{
+  		overflow: scroll;
+  		width:initial;
+  		height:240px;
+  	}
+  </style>
+
+
+	<script type="text/javascript">
+
+			$(document).ready(function(){	
+		
+			$(document).on("click","#s1",function(){
+
+				
+				//var i = 1;
+				//var checkb={};
+				//checkb.push("Nothing checked");
+				//$("#check input").each(function(){
+
+				//	checkb = $(this).val();
+				//});
+				
+				var  check = {	"checkbox1": $("#check1").is(":checked"), 
+								"checkbox2": $("#check2").is(":checked")
+								};
+				
+				var update = {"Email": $("#InputEmail1").val(), 
+							"Password": $("#InputPassword1").val(), 
+							"Interests": $("#R1 option:selected").text(), 
+							"Feedback":$("#textarea1").val(),
+							"Color":$("#radio1 input:checked").val(),
+							"Checklist":check};
+				console.log(JSON.stringify(update));
+				//console.log(checkb);
+				//debugger;
+			})	
+		})
+	</script>
+	<script type="text/javascript">
+	var line;
+	var counter = 0;
+		function read1(files){
+			//function for read a file
+			function savebt(files){
+
+				for (var b = 0; b < files.length ; b++){
+					line=[];
+					
+				var file = files[b];
+				
+
+				var reader = new FileReader();
+				//alert("here is a file name: " + name1);
+					reader.onload = function(e){
+
+						//var result = e.target.result;
+						//whole file doc readed
+
+						//line = line.concat(e.target.result.split('\n'));
+						// split every single line to a line array
+						line = e.target.result.split('\n');
+						var textb = document.getElementById('fileoutput');
+						//link textb with id fileoutput which is the button of choose file
+
+						//console.log(JSON.stringify(line).replace(/\\r/g,""));
+						//test for the array line
+
+						//var lines = result.split("\n").length - 1;
+						//count the lines of the file
+
+						//textb.innerHTML += filename;
+						//for sql input value 
+
+						//textb.innerHTML = JSON.stringify(line[0]).replace(/\\r/g,"").replace(/"/g,"");
+						//take off \r and "" for culcome names
+						//document.getElementById('btnSave').onclick = function(){savefile(line)};
+						savefile(line);
+						
+					};
+							
+				reader.readAsText(file, "utf-8");
+				}	
+			}
+			
+			
+			window.onload=(document.getElementById('btnSave').onclick = function(){
+				// check how many files uploaded
+				var fileUpload = document.getElementById('InputFile');
+				if (fileUpload.files.length > 5){
+					alert("You can only upload a maximum of 5 files");
+				}
+				else {counter = 0;
+					savebt(files);}
+				});
+			}	
+
+		
+		function savefile(line){
+			
+			//var fileName = prompt ('Please input each file name', '1.sql');
+				var colname = JSON.stringify(line[0]).replace(/\\r/g,"").replace(/"/g,"").replace(/\\/g,"");
+				var name1 = document.getElementById('InputFile').files[counter].name;
+				var q = name1.lastIndexOf('.') +1 ;
+				name1 = name1.substring(0,q) + "sql";
+				//rename file name to .sql
+
+				var count = line.length - 1;
+				var inputstring1 = "INSERT INTO rolling (" + colname + ") \r\n VALUE (";
+				var outputstring1 = "";			
+	
+				for (var i = 1; i< count; i++){
+					outputstring1 += "(" +JSON.stringify(line[i]).replace(/\\r/g,"").replace(/\,/g,'","').replace(/\\"/g,"") +"),\n";
+					
+				}
+
+				var p = outputstring1.lastIndexOf(',');
+				outputstring1 = outputstring1.substring(0, p) + ");";
+				var blob = new Blob([inputstring1 + outputstring1], { type: 'text/plain'});
+						
+		        var downloadLink = document.createElement('a');
+		        downloadLink.download = name1;
+		        counter ++; 
+		        downloadLink.innerHTML = 'Download File';
+		        downloadLink.href = window.URL.createObjectURL(blob);
+		        downloadLink.onclick = destroyClickedElement;
+		        downloadLink.style.display = 'none';
+		        document.body.appendChild(downloadLink);        
+
+		        downloadLink.click();					
+			
+		}
+
+		function destroyClickedElement(event)
+			{
+			    document.body.removeChild(event.target);
+			}
+	</script>
+
+</head>
+
+<body>
+ <div class="container">
+
+	<header>
+		<h1 class="col-md-12">Practise for boostrap</h1>
+	</header>
+</div> 
+	
+<div class="container">
+	<form id="practise1">
+	  <div class="form-group">
+	    <label for="exampleInputEmail1">Email address</label>
+	    <input required type="email" class="form-control" id="InputEmail1" placeholder="Email">
+	  </div>
+
+	  <div class="form-group">
+	    <label for="exampleInputPassword1">Password</label>
+	    <input required type="password" class="form-control" id="InputPassword1" placeholder="Password">
+	  </div>
+
+	  <div class="form-group">
+	    <label for="exampleInputFile">File input</label>
+	    <button type="button" id="btnSave" >Save</button>
+	    <input type="file" id="InputFile"  onchange= "read1(this.files)" multiple />
+	    <p class="help-block">Trying to pull the csv files</p>
+	    <pre class = "pre" id= "fileoutput"></pre>
+	  </div>
+	  
+	  <label>
+	  	<a href="">Select your interests</a>
+	  </label>
+
+	  <select id="R1" class="form-control">
+	  	<option>Football</option>
+	  	<option>Fishing</option>
+	  	<option>Computer Games</option>
+	  </select>
+	  <p></p>
+
+	  <label>Feedback</label>
+	  <textarea class="form-control" id="textarea1" rows="5"></textarea>
+
+	  <div class="checkbox" id="check" >
+		  <label>
+		  	<input type="checkbox" id="check1" ">check this 1
+		  </label>
+
+		  <label>
+		  	<input type="checkbox" id="check2" ">check this 2
+		  </label>
+	  </div>
+
+	  <div class="radio" id="radio1">
+	  	<label>
+	  		<input type="radio" value= "blue" name="radioinone">blue
+	  	</label>
+
+	  	<label>
+	  		<input type="radio" value= "red" name="radioinone">red
+	  	</label>
+
+	  	<label>
+	  		<input type="radio" value= "black" name="radioinone">black
+	  	</label>
+	  </div>
+
+	  <button type="button" class="btn btn-default"  id="s1">Submit</button>
+
+
+	</form>	
+
+	
+</div>
+
+	
+
+	
+</body>
+</html>
